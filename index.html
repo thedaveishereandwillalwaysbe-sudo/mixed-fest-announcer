@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mixed Fest '26 — Race Control</title>
+<style>
+  :root{
+    --bg:#15110d;--bg2:#1d1813;--bg3:#241d15;--line:#3a2f24;--line2:#4d3f2e;
+    --parch:#ece0c8;--tan:#d8b984;--muted:#9a8b73;--ochre:#cf922f;--red:#b23a2e;--redhot:#d9483a;
+    --display:'Rockwell','Roboto Slab','Georgia',serif;--body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}html,body{margin:0}
+  body{min-height:100vh;background:radial-gradient(130% 90% at 50% -10%, #2a2117 0%, var(--bg) 60%) fixed, var(--bg);color:var(--parch);font-family:var(--body);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+  .wrap{max-width:980px;margin:0 auto;padding:2.5rem 1.2rem;flex:1;width:100%}
+  .hat{text-align:center;margin-bottom:2.2rem}
+  .star{color:var(--ochre);font-size:1.6rem}
+  h1{font-family:var(--display);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:clamp(1.8rem,6vw,3rem);margin:.4rem 0 .2rem;color:var(--parch)}
+  .sub{font-family:var(--mono);letter-spacing:.24em;text-transform:uppercase;font-size:.72rem;color:var(--tan)}
+  .dates{font-family:var(--mono);color:var(--muted);font-size:.78rem;letter-spacing:.16em;margin-top:.5rem}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+  @media(max-width:760px){.cards{grid-template-columns:1fr}}
+  a.card{display:flex;flex-direction:column;text-decoration:none;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:1.4rem;transition:transform .1s, border-color .15s, background .15s;color:var(--parch)}
+  a.card:hover{transform:translateY(-3px);border-color:var(--ochre);background:#221a12}
+  a.card:focus-visible{outline:2px solid var(--ochre);outline-offset:3px}
+  .ic{font-size:1.8rem;margin-bottom:.6rem}
+  .ct{font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font-size:1.1rem;color:var(--tan);margin-bottom:.3rem}
+  .cd{font-size:.86rem;color:var(--muted);line-height:1.5;flex:1}
+  .go{margin-top:.9rem;font-family:var(--mono);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ochre)}
+  .badge{display:inline-block;font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;padding:.12rem .5rem;border-radius:20px;border:1px solid var(--line2);color:var(--muted);margin-top:.5rem;align-self:flex-start}
+  footer{text-align:center;padding:1.4rem;color:var(--muted);font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;border-top:1px solid var(--line)}
+  footer a{color:var(--tan)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hat">
+      <div class="star">✶</div>
+      <h1>Mixed Fest '26</h1>
+      <div class="sub">Race Control</div>
+      <div class="dates">19–21 June 2026 · The Cow's Roast · Grass &amp; Astro</div>
+    </div>
+    <div class="cards">
+      <a class="card" href="mixed_fest_announcer.html">
+        <div class="ic">📯</div>
+        <div class="ct">The Dispatch Desk</div>
+        <div class="cd">Auto foghorn &amp; Wild West announcer. Drives the whole day's timing — matches, breaks, Beer Race and the Big Finale — hands-free.</div>
+        <span class="badge">Run on the PA laptop</span>
+        <div class="go">Open the desk →</div>
+      </a>
+      <a class="card" href="handout_pack.html">
+        <div class="ct"><div class="ic">📜</div>Handout Pack</div>
+        <div class="cd">Rules, housekeeping, camping zones, timings and the team agreement — everything captains need on the day.</div>
+        <span class="badge">Share with captains</span>
+        <div class="go">Open the pack →</div>
+      </a>
+      <a class="card" href="https://tournifyapp.com/live/mixedfest26/schedule" target="_blank" rel="noopener">
+        <div class="ic">🤠</div>
+        <div class="ct">Live Schedule</div>
+        <div class="cd">Fixtures, pitches, umpires and live scores on Tournify. Captains log results here after every match.</div>
+        <span class="badge">Tournify · live</span>
+        <div class="go">View the schedule →</div>
+      </a>
+    </div>
+  </div>
+  <footer>Babs · Hunt · Clare · Becca · Kate &nbsp;|&nbsp; <a href="mailto:mixedfestival@berkohockeyclub.com">mixedfestival@berkohockeyclub.com</a></footer>
+</body>
+</html>
