@@ -161,9 +161,9 @@ const BANK={
   fixtureLine:["On {pitch}, it's {a} taking on {b}, with {umpire} keeping the peace.","Over on {pitch}, {a} square off against {b}, umpired by {umpire}.","{pitch} hosts {a} versus {b}. {umpire} has the whistle."],
   fixtureLineNoUmp:["On {pitch}, it's {a} taking on {b}.","Over on {pitch}, {a} square off against {b}.","{pitch} hosts {a} versus {b}."],
   umpireCall:["Nominated umpires, grab your whistles and mosey on over to your pitches, please.","Umpires — to your pitches now, partners. We can't ride without you.","Whistle-blowers, take your posts. Each team, remember to provide your umpire."],
-  playOn:["Saddle up — on the horn, you ride! Round {round}, play on!","Sticks down, partners. Round {round} — get goin'!","Here we go, folks. Round {round} is underway. Good luck!"],
-  finalePlayOn:["This is it — the Big Finale! On the horn, you ride. Play on, partners!","All the glory on the line. The Big Finale starts now — play on!"],
-  endMatch:["And that's the foghorn — time, partners! Sticks down.","That's your lot — the horn has sounded. Match over!"],
+  playOn:["Saddle up — on the {sig}, you ride! Round {round}, play on!","Sticks down, partners. Round {round} — get goin'!","Here we go, folks. Round {round} is underway. Good luck!"],
+  finalePlayOn:["This is it — the Big Finale! On the {sig}, you ride. Play on, partners!","All the glory on the line. The Big Finale starts now — play on!"],
+  endMatch:["And that's the {sig} — time, partners! Sticks down.","That's your lot — the {sig} has sounded. Match over!"],
   scoresReminder:["Captains — wire your scores into the Tournify app quick as you can, ya hear?","Captains, pop your results into Tournify before the next throw-off, please.","Round's done. Captains, get those scores logged in Tournify."],
   finals:["This is it, partners — the Big Finale is upon us! Best of luck to both teams still standing tall.","Round 'em up, folks — it's the Big Finale! The cream of the crop ride out for glory."],
   events:{
@@ -231,7 +231,8 @@ function roundNumOf(s){return s.num||1;}
 function buildRoundAnnouncement(s){let out=s.finale?pick(BANK.finals):fill(pick(BANK.openers),{round:roundNumOf(s)});
   (s.fixtures||[]).forEach(f=>{const d={pitch:speakField(f),a:f.a,b:f.b,umpire:(f.umpire||'').trim()};out+=" "+((d.umpire)?fill(pick(BANK.fixtureLine),d):fill(pick(BANK.fixtureLineNoUmp),d));});
   out+=" "+pick(BANK.umpireCall);return out;}
-const buildPlayOn=s=>s.finale?pick(BANK.finalePlayOn):fill(pick(BANK.playOn),{round:roundNumOf(s)});
+function sigWord(){return settings.startSignal==='foghorn'?'foghorn':'whistle';}
+const buildPlayOn=s=>fill(s.finale?pick(BANK.finalePlayOn):pick(BANK.playOn),{round:roundNumOf(s),sig:sigWord()});
 function buildEventShout(s){const bank=(BANK.events[s.kind]||BANK.events.generic);return fill(pick(bank),{label:s.label,mins:s.mins});}
 function durSec(s){return Math.max(1,(s.mins||settings.matchMins))*60;}
 
@@ -250,7 +251,7 @@ function advance(i){const j=i+1;
   if(agenda[j]){if(isRound(i)&&isRound(j)){enterBreak(j,settings.gapMins*60);}else{enterSegment(j);}}
   else{T.mode='idle';T.running=false;T.ending=false;setControls();setPhaseUI();log('Schedule complete — that is a wrap, partners!','system');}}
 function segmentEnded(i){if(T.ending)return;const s=agenda[i];T.ending=true;T.running=false;setControls();setPhaseUI();
-  if(s.type==='round'){const d=endSignal('end of match');setTimeout(()=>{const txt=pick(BANK.endMatch)+' '+pick(BANK.scoresReminder);speak(txt,'time');setTimeout(()=>advance(i),speakMs(txt)+200);},d+150);}
+  if(s.type==='round'){const d=endSignal('end of match');setTimeout(()=>{const txt=fill(pick(BANK.endMatch),{sig:sigWord()})+' '+pick(BANK.scoresReminder);speak(txt,'time');setTimeout(()=>advance(i),speakMs(txt)+200);},d+150);}
   else{advance(i);}}
 function tickTimer(){if(T.mode==='idle'||!T.running)return;const left=Math.max(0,Math.round((T.endAt-Date.now())/1000));
   if(T.mode==='break'&&isRound(T.up)&&left===60&&!T.oneShots.has(T.token+':u')){T.oneShots.add(T.token+':u');speak(pick(BANK.umpireCall),'umpires');}
