@@ -99,6 +99,7 @@
         <button id="endBtn" disabled>⏭ End now</button>
         <button id="plus30" disabled>+30s</button>
         <button id="minus30" disabled>−30s</button>
+        <button id="whistleBtn">Test whistle</button>
         <button id="hornBtn">📯 Test foghorn</button>
       </div>
     </div>
@@ -123,8 +124,11 @@
         <div class="ctl-row"><label for="gapMins">Break between matches (mins)</label><input type="number" id="gapMins" min="0" max="60" style="width:62px"></div>
         <div class="ctl-row"><label for="warmupSecs">Warm-up before Round 1 (secs)</label><input type="number" id="warmupSecs" min="0" max="600" style="width:62px"></div>
         <div class="ctl-row"><label for="warnHorn">Short blast at 1 min left</label><input type="checkbox" class="switch" id="warnHorn"></div>
-        <div class="grp-title">Foghorn</div>
-        <div class="ctl-row"><label for="fogVol">Foghorn volume</label><input type="range" id="fogVol" min="0" max="1" step="0.05"></div>
+        <div class="grp-title">Match signals</div>
+        <div class="ctl-row"><label for="startSignal">Match signal (start &amp; end)</label><select id="startSignal" style="max-width:130px"><option value="whistle">Whistle</option><option value="foghorn">Foghorn</option></select></div>
+        <div class="ctl-row"><label for="whistleStyle">Whistle style</label><select id="whistleStyle" style="max-width:130px"><option value="pea">Classic pea</option><option value="pealess">Sharp (pealess)</option><option value="electronic">Electronic</option><option value="custom">My own clip</option></select></div>
+        <div class="ctl-row"><label for="whistleFile">Load whistle clip (mp3/wav)</label><input type="file" id="whistleFile" accept="audio/*" style="max-width:148px;font-size:.72rem"></div>
+        <div class="ctl-row"><label for="fogVol">Signal volume (whistle &amp; horn)</label><input type="range" id="fogVol" min="0" max="1" step="0.05"></div>
         <div class="grp-title">Voice</div>
         <div class="ctl-row"><label for="voice">Announcer voice</label><select id="voice" style="max-width:150px"></select></div>
         <div class="ctl-row"><label for="rate">Speed</label><input type="range" id="rate" min="0.7" max="1.2" step="0.05"></div>
@@ -173,8 +177,8 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 const fill=(s,d)=>s.replace(/\{(\w+)\}/g,(_,k)=>d[k]!=null?d[k]:"");
 
 let agenda=store.get('mf_agenda')||JSON.parse(JSON.stringify(DEFAULT_AGENDA));
-let settings=Object.assign({matchMins:20,gapMins:10,warmupSecs:60,warnHorn:false,fogVol:0.85,rate:0.95,pitch:0.9,vol:1,voice:''},store.get('mf_settings')||{});
-let onAir=false, wakeLock=null;
+let settings=Object.assign({matchMins:20,gapMins:10,warmupSecs:60,warnHorn:false,fogVol:0.85,startSignal:'whistle',whistleStyle:'pea',rate:0.95,pitch:0.9,vol:1,voice:''},store.get('mf_settings')||{});
+let onAir=false, wakeLock=null, customWhistleBuf=null;
 let T={mode:'idle',cur:-1,up:-1,endAt:0,total:0,running:false,pausedLeft:0,token:0,oneShots:new Set(),briefed:new Set()};
 function saveAll(){store.set('mf_agenda',agenda);store.set('mf_settings',settings);}
 function numberAgenda(){let n=0;agenda.forEach(s=>{if(s.type==='round'&&!s.finale){n++;s.num=n;}});}
@@ -186,7 +190,32 @@ function ensureAudio(){if(actx)return;try{actx=new (window.AudioContext||window.
 function blast(start,dur){const g=actx.createGain();g.connect(fogMaster);g.gain.setValueAtTime(0.0001,start);g.gain.exponentialRampToValueAtTime(1,start+0.12);g.gain.setValueAtTime(1,start+dur-0.55);g.gain.exponentialRampToValueAtTime(0.0001,start+dur);
   const lp=actx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=720;lp.Q.value=0.6;lp.connect(g);
   [[74,'sine',0.95],[148,'sawtooth',0.5],[150.5,'sawtooth',0.42],[222,'sawtooth',0.14]].forEach(([f,ty,a])=>{const o=actx.createOscillator();o.type=ty;o.frequency.value=f;const og=actx.createGain();og.gain.value=a;o.connect(og);og.connect(lp);o.start(start);o.stop(start+dur+0.05);});}
-function foghorn(n,dur,tag){if(!onAir)return;ensureAudio();if(!actx)return;if(actx.state==='suspended')actx.resume();let t=actx.currentTime+0.02;for(let i=0;i<n;i++){blast(t,dur||2.2);t+=(dur||2.2)+0.45;}log('Foghorn — '+(tag||(n>1?'end of match':'match start')),'horn');}
+function fogReady(){ensureAudio();if(!actx)return false;if(actx.state==='suspended')actx.resume();return true;}
+function foghorn(n,dur,tag){if(!onAir||!fogReady())return 0;dur=dur||2.2;let t=actx.currentTime+0.02;for(let i=0;i<n;i++){blast(t,dur);t+=dur+0.45;}log('Foghorn — '+(tag||(n>1?'end of match':'match start')),'horn');return Math.round(n*(dur+0.45)*1000);}
+function whistleBlast(start,dur,style){const ctx=actx;const out=ctx.createGain();out.connect(fogMaster);
+  out.gain.setValueAtTime(0.0001,start);out.gain.exponentialRampToValueAtTime(0.95,start+0.02);out.gain.setValueAtTime(0.95,start+dur-0.06);out.gain.exponentialRampToValueAtTime(0.0001,start+dur);
+  let cfg;
+  if(style==='pealess'){cfg={bp:3600,Q:9,warble:0,parts:[[3150,0.5,'sine'],[3650,0.45,'sine'],[4100,0.32,'sine']]};}
+  else if(style==='electronic'){cfg={bp:2100,Q:2.5,warble:0,parts:[[2050,0.6,'square'],[4100,0.12,'sine']]};}
+  else{cfg={bp:3000,Q:4,warble:1,parts:[[3300,0.55,'sine'],[2200,0.4,'sine'],[5200,0.12,'sine']]};}
+  const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=cfg.bp;bp.Q.value=cfg.Q;
+  if(cfg.warble){const trem=ctx.createGain();trem.gain.value=0.78;const tl=ctx.createOscillator();tl.type='sine';tl.frequency.value=36;const tg=ctx.createGain();tg.gain.value=0.22;tl.connect(tg);tg.connect(trem.gain);tl.start(start);tl.stop(start+dur+0.02);bp.connect(trem);trem.connect(out);}
+  else bp.connect(out);
+  cfg.parts.forEach(([f,amp,type],idx)=>{const o=ctx.createOscillator();o.type=type;o.frequency.setValueAtTime(f*0.86,start);o.frequency.exponentialRampToValueAtTime(f,start+0.05);
+    if(cfg.warble){const lfo=ctx.createOscillator();lfo.type='sine';lfo.frequency.value=34+idx*4;const lg=ctx.createGain();lg.gain.value=110;lfo.connect(lg);lg.connect(o.frequency);lfo.start(start);lfo.stop(start+dur+0.02);}
+    const g=ctx.createGain();g.gain.value=amp;o.connect(g);g.connect(bp);o.start(start);o.stop(start+dur+0.02);});
+  const nDur=Math.min(0.07,dur),nlen=Math.max(1,Math.ceil(ctx.sampleRate*nDur)),nbuf=ctx.createBuffer(1,nlen,ctx.sampleRate),nd=nbuf.getChannelData(0);for(let i=0;i<nlen;i++)nd[i]=(Math.random()*2-1)*(1-i/nlen);
+  const nb=ctx.createBufferSource();nb.buffer=nbuf;const nbp=ctx.createBiquadFilter();nbp.type='bandpass';nbp.frequency.value=cfg.bp;nbp.Q.value=1.1;const ng=ctx.createGain();ng.gain.value=0.45;nb.connect(nbp);nbp.connect(ng);ng.connect(out);nb.start(start);nb.stop(start+nDur);}
+function playBuffer(buf,n){let t=actx.currentTime+0.02;const g=actx.createGain();g.gain.value=1;g.connect(fogMaster);for(let i=0;i<n;i++){const s=actx.createBufferSource();s.buffer=buf;s.connect(g);s.start(t);t+=buf.duration+0.12;}return Math.round(n*(buf.duration+0.12)*1000);}
+function whistlePeeps(n,dur,tag){if(!onAir||!fogReady())return 0;let ms;
+  if(settings.whistleStyle==='custom'&&customWhistleBuf){ms=playBuffer(customWhistleBuf,n);}
+  else{dur=dur||0.6;const st=settings.whistleStyle||'pea';let t=actx.currentTime+0.02;for(let i=0;i<n;i++){whistleBlast(t,dur,st);t+=dur+0.18;}ms=Math.round(n*(dur+0.18)*1000);}
+  log('Whistle — '+(tag||'')+(n>1?' (time)':' (start)'),'whistle');return ms;}
+function decodeStored(url,cb){try{ensureAudio();if(!actx){if(cb)cb(false);return;}const b=atob(url.split(',').pop());const a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);actx.decodeAudioData(a.buffer.slice(0),buf=>{customWhistleBuf=buf;if(cb)cb(true);},()=>{if(cb)cb(false);});}catch(e){if(cb)cb(false);}}
+function loadCustomWhistle(){const b=store.get('mf_whistle');if(b)decodeStored(b);}
+function startSignal(tag){return settings.startSignal==='whistle'?whistlePeeps(1,0.6,tag):foghorn(1,2.4,tag);}
+function endSignal(tag){return settings.startSignal==='whistle'?whistlePeeps(2,0.5,tag):foghorn(2,2.0,tag);}
+function eventSignal(tag){return foghorn(1,1.3,tag);}
 
 /* ---- speech ---- */
 const synth=window.speechSynthesis;let voices=[];
@@ -194,6 +223,7 @@ function scoreVoice(v){let s=0;const n=v.name.toLowerCase();if(/en[-_]gb/i.test(
 function loadVoices(){voices=synth?synth.getVoices():[];const ranked=[...voices].sort((a,b)=>scoreVoice(b)-scoreVoice(a));const sel=document.getElementById('voice');sel.innerHTML='';ranked.forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=`${v.name} (${v.lang})`;sel.appendChild(o);});if(!settings.voice&&ranked[0])settings.voice=ranked[0].name;if(settings.voice)sel.value=settings.voice;}
 if(synth)synth.onvoiceschanged=loadVoices;
 function speak(text,tag){log(text,tag);if(!synth||!onAir)return;(text.match(/[^.!?]+[.!?]*/g)||[text]).forEach(p=>{const u=new SpeechSynthesisUtterance(p.trim());const v=voices.find(x=>x.name===settings.voice);if(v)u.voice=v;u.rate=settings.rate;u.volume=settings.vol;u.pitch=settings.pitch;synth.speak(u);});}
+function speakMs(t){return Math.max(2200,Math.round((t||'').length/12.5*1000/(settings.rate||1)));}
 
 /* ---- announcement builders ---- */
 function speakField(f){return (f.field||'').replace(/\s*\(\s*([^)]+?)\s*\)/,', the $1 pitch').trim();}
@@ -207,23 +237,21 @@ function durSec(s){return Math.max(1,(s.mins||settings.matchMins))*60;}
 
 /* ---- engine ---- */
 function isRound(i){return agenda[i]&&agenda[i].type==='round';}
-function setEnd(secs){T.total=secs;T.endAt=Date.now()+secs*1000;T.running=true;T.token++;T.oneShots.clear();}
+function setEnd(secs){T.total=secs;T.endAt=Date.now()+secs*1000;T.running=true;T.token++;T.oneShots.clear();T.ending=false;}
 function enterBreak(up,secs){T.mode='break';T.up=up;T.cur=-1;setEnd(secs);
   const s=agenda[up];if(s&&s.type==='round'){speak(buildRoundAnnouncement(s),'coming up');T.briefed.add(up);}
   setControls();setPhaseUI();}
-function enterSegment(i){T.mode='segment';T.cur=i;T.up=-1;const s=agenda[i];setEnd(durSec(s));
-  if(s.type==='round'){foghorn(1,2.4,s.finale?'Big Finale start':'match start');if(!T.briefed.has(i))speak(buildRoundAnnouncement(s),'round');speak(buildPlayOn(s),'play on');}
-  else{foghorn(1,1.3,s.label);speak(buildEventShout(s),s.kind||'event');}
+function enterSegment(i){T.mode='segment';T.cur=i;T.up=-1;const s=agenda[i];setEnd(durSec(s));const tok=T.token;
+  if(s.type==='round'){const d=startSignal(s.finale?'Big Finale start':'match start');setTimeout(()=>{if(T.token!==tok)return;const txt=(T.briefed.has(i)?'':buildRoundAnnouncement(s)+' ')+buildPlayOn(s);speak(txt,'play on');},d+150);}
+  else{const d=eventSignal(s.label);setTimeout(()=>{if(T.token!==tok)return;speak(buildEventShout(s),s.kind||'event');},d+150);}
   setControls();setPhaseUI();}
 function startDay(){if(!agenda.length){log('No schedule loaded.','—');return;}if(!onAir)goOnAir();enterBreak(0,Math.max(1,settings.warmupSecs));}
-function segmentEnded(i){const s=agenda[i];
-  if(s.type==='round'){foghorn(2,2.0,'end of match');speak(pick(BANK.endMatch),'time');setTimeout(()=>speak(pick(BANK.scoresReminder),'scores'),500);}
-  const j=i+1;
-  if(agenda[j]){
-    if(isRound(i)&&isRound(j)){enterBreak(j,settings.gapMins*60);}
-    else{enterSegment(j);}
-  } else {T.mode='idle';T.running=false;setControls();setPhaseUI();log('Schedule complete — that is a wrap, partners!','system');}
-}
+function advance(i){const j=i+1;
+  if(agenda[j]){if(isRound(i)&&isRound(j)){enterBreak(j,settings.gapMins*60);}else{enterSegment(j);}}
+  else{T.mode='idle';T.running=false;T.ending=false;setControls();setPhaseUI();log('Schedule complete — that is a wrap, partners!','system');}}
+function segmentEnded(i){if(T.ending)return;const s=agenda[i];T.ending=true;T.running=false;setControls();setPhaseUI();
+  if(s.type==='round'){const d=endSignal('end of match');setTimeout(()=>{const txt=pick(BANK.endMatch)+' '+pick(BANK.scoresReminder);speak(txt,'time');setTimeout(()=>advance(i),speakMs(txt)+200);},d+150);}
+  else{advance(i);}}
 function tickTimer(){if(T.mode==='idle'||!T.running)return;const left=Math.max(0,Math.round((T.endAt-Date.now())/1000));
   if(T.mode==='break'&&isRound(T.up)&&left===60&&!T.oneShots.has(T.token+':u')){T.oneShots.add(T.token+':u');speak(pick(BANK.umpireCall),'umpires');}
   if(T.mode==='segment'&&isRound(T.cur)&&settings.warnHorn&&left===60&&!T.oneShots.has(T.token+':w')){T.oneShots.add(T.token+':w');foghorn(1,0.8,'one minute left');}
@@ -254,10 +282,10 @@ function render(){let nowS=null,nextS=null;
   document.getElementById('nextPill').textContent=nextS?nextS.label:'—';}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function log(msg,tag){const box=document.getElementById('log'),d=new Date();const t=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;const el=document.createElement('div');el.className='line';el.innerHTML=`<span class="t">${t}</span><span class="msg">${esc(msg)}</span><span class="tag">${esc(tag||'')}</span>`;box.prepend(el);}
-function setControls(){const run=T.mode!=='idle';document.getElementById('startBtn').disabled=run;document.getElementById('pauseBtn').disabled=!run;document.getElementById('throwBtn').disabled=!(T.mode==='break');document.getElementById('endBtn').disabled=!(T.mode==='segment');document.getElementById('plus30').disabled=!run;document.getElementById('minus30').disabled=!run;document.getElementById('pauseBtn').textContent=T.running?'⏸ Pause':'▶ Resume';}
+function setControls(){const run=T.mode!=='idle',busy=!!T.ending;document.getElementById('startBtn').disabled=run;document.getElementById('pauseBtn').disabled=!run||busy;document.getElementById('throwBtn').disabled=!(T.mode==='break')||busy;document.getElementById('endBtn').disabled=!(T.mode==='segment')||busy;document.getElementById('plus30').disabled=!run||busy;document.getElementById('minus30').disabled=!run||busy;document.getElementById('pauseBtn').textContent=T.running?'⏸ Pause':'▶ Resume';}
 
 /* ---- on / off air ---- */
-async function goOnAir(){if(onAir)return;ensureAudio();if(actx&&actx.state==='suspended')actx.resume();onAir=true;document.body.classList.add('live');document.getElementById('lampTxt').textContent='On air';document.getElementById('goBtn').textContent='○ Stand down';document.getElementById('speechWarn').style.display='none';
+async function goOnAir(){if(onAir)return;ensureAudio();if(actx&&actx.state==='suspended')actx.resume();if(!customWhistleBuf)loadCustomWhistle();onAir=true;document.body.classList.add('live');document.getElementById('lampTxt').textContent='On air';document.getElementById('goBtn').textContent='○ Stand down';document.getElementById('speechWarn').style.display='none';
   if(synth){const u=new SpeechSynthesisUtterance('Dispatch desk is on air.');const v=voices.find(x=>x.name===settings.voice);if(v)u.voice=v;u.rate=settings.rate;u.volume=settings.vol;u.pitch=settings.pitch;synth.speak(u);}log('On air.','system');
   try{wakeLock=await navigator.wakeLock.request('screen');}catch(e){}}
 function standDown(){if(!onAir)return;onAir=false;document.body.classList.remove('live');document.getElementById('lampTxt').textContent='Off air';document.getElementById('goBtn').textContent='● Go on air';
@@ -275,6 +303,7 @@ document.getElementById('endBtn').onclick=()=>{if(T.mode==='segment'){if(synth)s
 document.getElementById('plus30').onclick=()=>{if(T.running)T.endAt+=30000;else T.pausedLeft+=30;setPhaseUI();};
 document.getElementById('minus30').onclick=()=>{if(T.running)T.endAt-=30000;else T.pausedLeft=Math.max(0,T.pausedLeft-30);setPhaseUI();};
 document.getElementById('hornBtn').onclick=()=>{if(!onAir){document.getElementById('speechWarn').style.display='block';return;}foghorn(1,2.2,'test');};
+document.getElementById('whistleBtn').onclick=()=>{if(!onAir){document.getElementById('speechWarn').style.display='block';return;}whistlePeeps(1,0.6,'test');};
 document.getElementById('announceRound').onclick=()=>{let s=null;if(T.mode==='break')s=agenda[T.up];else if(T.mode==='segment')s=agenda[T.cur];else s=agenda.find(x=>x.type==='round');if(!s||s.type!=='round')return;if(synth)synth.cancel();speak(buildRoundAnnouncement(s),'round (manual)');};
 document.getElementById('scores').onclick=()=>{if(synth)synth.cancel();speak(pick(BANK.scoresReminder),'scores (manual)');};
 document.getElementById('finalsBtn').onclick=()=>{if(synth)synth.cancel();speak(pick(BANK.finals),'finals');};
@@ -290,6 +319,9 @@ function chk(id,k){const el=document.getElementById(id);el.checked=settings[k];e
 function rng(id,k,extra){const el=document.getElementById(id);el.value=settings[k];el.oninput=()=>{settings[k]=+el.value;saveAll();if(extra)extra();};}
 num('matchMins','matchMins');num('gapMins','gapMins');num('warmupSecs','warmupSecs');chk('warnHorn','warnHorn');
 rng('fogVol','fogVol',()=>{if(fogMaster)fogMaster.gain.value=settings.fogVol;});rng('rate','rate');rng('pitch','pitch');rng('vol','vol');
+{const ss=document.getElementById('startSignal');ss.value=settings.startSignal;ss.onchange=()=>{settings.startSignal=ss.value;saveAll();};}
+{const ws=document.getElementById('whistleStyle');ws.value=settings.whistleStyle;ws.onchange=()=>{settings.whistleStyle=ws.value;saveAll();if(onAir)whistlePeeps(1,0.6,'preview');};}
+document.getElementById('whistleFile').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;if(f.size>1200000){alert('Please use a short whistle clip — under about 1.2 MB.');return;}const r=new FileReader();r.onload=()=>{const url=r.result;store.set('mf_whistle',url);ensureAudio();if(actx&&actx.state==='suspended')actx.resume();decodeStored(url,ok=>{if(ok){settings.whistleStyle='custom';document.getElementById('whistleStyle').value='custom';saveAll();log('Custom whistle loaded: '+f.name,'system');if(onAir)whistlePeeps(1,0.6,'preview');}else alert('Could not read that audio file. Try a WAV or MP3.');});};r.readAsDataURL(f);};
 document.getElementById('voice').onchange=e=>{settings.voice=e.target.value;saveAll();};
 
 /* ---- schedule editor ---- */
@@ -318,7 +350,7 @@ document.getElementById('resetDay').onclick=()=>{resetEngine();document.getEleme
 document.getElementById('restoreDefault').onclick=()=>{agenda=JSON.parse(JSON.stringify(DEFAULT_AGENDA));numberAgenda();saveAll();document.getElementById('paste').value=agendaToText();resetEngine();document.getElementById('schedStatus').textContent='Restored the built-in 2026 schedule.';};
 
 /* ---- boot ---- */
-loadVoices();setTimeout(loadVoices,400);
+loadVoices();setTimeout(loadVoices,400);loadCustomWhistle();
 setControls();render();setPhaseUI();
 setInterval(()=>{const d=new Date();document.getElementById('wallclock').textContent=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;tickTimer();setPhaseUI();render();},1000);
 </script>
