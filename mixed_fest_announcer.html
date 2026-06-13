@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mixed Fest '26 — Dispatch Desk</title>
+<style>
+  :root{
+    --bg:#15110d;--bg2:#1d1813;--bg3:#241d15;--line:#3a2f24;--line2:#4d3f2e;
+    --parch:#ece0c8;--tan:#d8b984;--muted:#9a8b73;--ochre:#cf922f;--red:#b23a2e;--redhot:#d9483a;--go:#8aa75b;--gohot:#a6c46f;
+    --display:'Rockwell','Roboto Slab','Georgia',serif;--body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}html,body{margin:0}
+  body{background:radial-gradient(140% 100% at 50% -20%, #2a2117 0%, var(--bg) 60%) fixed, var(--bg);color:var(--parch);font-family:var(--body);line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:3rem}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 1rem}a{color:var(--tan)}
+  header{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,#1d1813 0%, rgba(29,24,19,.92) 100%);border-bottom:2px solid var(--line2);backdrop-filter:blur(4px)}
+  .bar{display:flex;align-items:center;gap:1rem;padding:.7rem 1rem;max-width:1180px;margin:0 auto;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:.6rem;min-width:0}.star{color:var(--ochre);font-size:1.3rem;line-height:1}
+  .brand h1{font-family:var(--display);font-weight:700;font-size:1.05rem;letter-spacing:.16em;text-transform:uppercase;margin:0;color:var(--parch);white-space:nowrap}
+  .brand small{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
+  .wallclock{font-family:var(--mono);font-size:1.1rem;letter-spacing:.06em;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+  .lamp{display:flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .dot{width:13px;height:13px;border-radius:50%;background:#5a4a36;box-shadow:inset 0 0 0 2px rgba(0,0,0,.3)}
+  body.live .dot{background:var(--redhot);box-shadow:0 0 12px 2px rgba(217,72,58,.7), inset 0 0 0 2px rgba(0,0,0,.25);animation:pulse 1.8s infinite}
+  body.live .lamp{color:var(--redhot)}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  button{font-family:var(--body);font-size:.85rem;font-weight:600;cursor:pointer;border:1px solid var(--line2);background:var(--bg3);color:var(--parch);padding:.5rem .8rem;border-radius:7px;transition:transform .05s, background .15s, border-color .15s}
+  button:hover{background:#2e2418;border-color:var(--ochre)}button:active{transform:translateY(1px)}button:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}button:disabled{opacity:.4;cursor:not-allowed}
+  .btn-go{background:var(--red);border-color:var(--redhot);color:#fff;letter-spacing:.06em;text-transform:uppercase;font-family:var(--display)}.btn-go:hover{background:var(--redhot);border-color:#fff}
+  body.live .btn-go{background:#243a1e;border-color:var(--go);color:var(--gohot)}
+  .btn-primary{background:#3a2c19;border-color:var(--ochre);color:var(--tan)}.btn-primary:hover{background:#473522}
+  .btn-big{font-family:var(--display);font-size:1.05rem;letter-spacing:.05em;text-transform:uppercase;padding:.8rem 1.4rem}
+  .hero{margin-top:1.2rem;background:var(--bg2);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .hero .progress{height:6px;background:#2a2017}.hero .progress i{display:block;height:100%;width:0;background:var(--go);transition:width .9s linear}
+  .hero.break .progress i,.hero.event .progress i{background:var(--ochre)}
+  .hero .hb{padding:1.3rem 1.2rem;text-align:center}
+  .phase{font-family:var(--mono);font-size:.78rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+  .hero.match .phase{color:var(--gohot)}.hero.break .phase,.hero.event .phase{color:var(--ochre)}
+  .bigtime{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums;font-size:clamp(3.6rem,13vw,8.5rem);line-height:1;letter-spacing:.02em;margin:.2rem 0;color:var(--parch)}
+  .hero.match .bigtime{color:#e6efce}.hero.break .bigtime,.hero.event .bigtime{color:var(--tan)}
+  .phase-sub{color:var(--muted);font-size:.95rem;min-height:1.4em}.phase-sub b{color:var(--tan);font-weight:600}
+  .hero-controls{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1.1rem}
+  .grid{display:grid;grid-template-columns:1.4fr 1fr;gap:1rem;margin-top:1rem}@media(max-width:860px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .card-h{display:flex;align-items:center;gap:.6rem;padding:.6rem .9rem;border-bottom:1px solid var(--line);background:var(--bg3)}
+  .card-h .eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  .card-b{padding:.9rem}
+  .round-time{font-family:var(--mono);font-size:1rem;color:var(--ochre);font-weight:600}
+  .round-label{font-family:var(--display);font-size:1.4rem;letter-spacing:.04em;margin:.1rem 0 .2rem}
+  .fixtures{width:100%;border-collapse:collapse;margin-top:.4rem}
+  .fixtures th{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);text-align:left;padding:.3rem .5rem;border-bottom:1px solid var(--line)}
+  .fixtures td{padding:.45rem .5rem;border-bottom:1px solid #2a2017;font-size:.9rem;vertical-align:top}
+  .fixtures .pitch{color:var(--tan);font-weight:600;white-space:nowrap}.fixtures .ump{color:var(--muted);font-size:.84rem;white-space:nowrap}
+  .vs{color:var(--red);font-family:var(--display);padding:0 .35rem}
+  .empty{color:var(--muted);font-style:italic;padding:.6rem 0}
+  .eventbox{font-family:var(--display);font-size:1.2rem;color:var(--ochre);padding:.4rem 0}
+  .now-card .card-h{background:linear-gradient(90deg,#2a1c14,var(--bg3))}.next-card{margin-top:1rem}
+  .actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+  .ctl-row{display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.42rem 0;border-bottom:1px solid #2a2017;font-size:.86rem}.ctl-row:last-child{border-bottom:0}.ctl-row label{color:var(--muted)}
+  select,input[type=number]{font-family:var(--body);background:var(--bg);color:var(--parch);border:1px solid var(--line2);border-radius:6px;padding:.3rem .45rem;font-size:.84rem}
+  input[type=range]{accent-color:var(--ochre)}
+  .switch{appearance:none;width:42px;height:23px;border-radius:20px;background:#3a2f24;border:1px solid var(--line2);position:relative;cursor:pointer;flex:none}
+  .switch:checked{background:var(--go)}.switch::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:var(--parch);transition:left .15s}.switch:checked::after{left:21px}
+  .grp-title{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ochre);margin:.8rem 0 .2rem}.grp-title:first-child{margin-top:0}
+  .log{font-family:var(--mono);font-size:.78rem;max-height:280px;overflow:auto;padding:.3rem .2rem}
+  .log .line{display:flex;gap:.6rem;padding:.32rem .4rem;border-bottom:1px dashed #2a2017}.log .t{color:var(--ochre);flex:none}.log .msg{color:var(--parch);opacity:.92}.log .tag{color:var(--muted);flex:none;text-transform:uppercase;font-size:.62rem;letter-spacing:.12em;align-self:center}
+  details.editor{margin-top:1.2rem;background:var(--bg2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  details.editor>summary{padding:.8rem 1rem;cursor:pointer;font-family:var(--display);letter-spacing:.06em;text-transform:uppercase;font-size:.95rem;color:var(--tan);list-style:none}
+  details.editor>summary::-webkit-details-marker{display:none}details.editor>summary::before{content:"▸ ";color:var(--ochre)}details.editor[open]>summary::before{content:"▾ "}
+  .editor-b{padding:1rem;border-top:1px solid var(--line)}
+  textarea{width:100%;min-height:160px;background:var(--bg);color:var(--parch);border:1px solid var(--line2);border-radius:8px;padding:.7rem;font-family:var(--mono);font-size:.8rem;line-height:1.6;resize:vertical}
+  .hint{font-size:.8rem;color:var(--muted);margin:.5rem 0}.hint code{background:var(--bg3);padding:.05rem .35rem;border-radius:4px;color:var(--tan)}
+  .editor-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+  .pill{display:inline-block;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:.15rem .5rem;border-radius:20px;border:1px solid var(--line2);color:var(--muted)}
+  footer{max-width:1180px;margin:2rem auto 0;padding:0 1rem;color:var(--muted);font-size:.78rem;text-align:center;font-family:var(--mono);letter-spacing:.08em}
+  .warn{background:#2a1714;border:1px solid var(--red);color:#e9b6ae;padding:.6rem .8rem;border-radius:8px;font-size:.82rem;margin:.6rem 0}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="brand"><span class="star">✶</span><div><h1>Mixed Fest '26 · Dispatch Desk</h1><small>Foghorn &amp; Announcer — Grass &amp; Astro</small></div></div>
+    <div class="wallclock" id="wallclock">--:--:--</div>
+    <div class="lamp"><span class="dot"></span><span id="lampTxt">Off air</span></div>
+    <button class="btn-go" id="goBtn">● Go on air</button>
+  </div>
+</header>
+<div class="wrap">
+  <div id="speechWarn" class="warn" style="display:none">Sound isn't unlocked yet. Click <strong>Go on air</strong> once to allow the foghorn and voice, then test them.</div>
+  <div class="hero" id="hero">
+    <div class="progress"><i id="prog"></i></div>
+    <div class="hb">
+      <div class="phase" id="phase">Ready</div>
+      <div class="bigtime" id="bigtime">--:--</div>
+      <div class="phase-sub" id="phaseSub">Schedule's loaded. Go on air, then hit <b>Start the day</b>.</div>
+      <div class="hero-controls">
+        <button class="btn-primary btn-big" id="startBtn">▶ Start the day</button>
+        <button id="pauseBtn" disabled>⏸ Pause</button>
+        <button id="throwBtn" disabled>📢 Throw off now</button>
+        <button id="endBtn" disabled>⏭ End now</button>
+        <button id="plus30" disabled>+30s</button>
+        <button id="minus30" disabled>−30s</button>
+        <button id="hornBtn">📯 Test foghorn</button>
+      </div>
+    </div>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="card now-card"><div class="card-h"><span class="eyebrow">On now</span><span class="pill" id="nowPill">—</span></div><div class="card-b" id="nowBody"><div class="empty">Not started.</div></div></div>
+      <div class="card next-card"><div class="card-h"><span class="eyebrow">Up next</span><span class="pill" id="nextPill">—</span></div><div class="card-b" id="nextBody"><div class="empty">—</div></div></div>
+      <div class="actions">
+        <button id="announceRound">📣 Re-announce round</button>
+        <button id="scores">Scores → Tournify</button>
+        <button id="finalsBtn">Finals shout</button>
+        <button id="prizesBtn">Prize-giving</button>
+        <button id="testVoice">Test voice</button>
+        <button id="stopBtn">⏹ Stop speaking</button>
+      </div>
+    </div>
+    <div>
+      <div class="card"><div class="card-h"><span class="eyebrow">Settings</span></div><div class="card-b">
+        <div class="grp-title">Timing</div>
+        <div class="ctl-row"><label for="matchMins">Match length (mins)</label><input type="number" id="matchMins" min="1" max="90" style="width:62px"></div>
+        <div class="ctl-row"><label for="gapMins">Break between matches (mins)</label><input type="number" id="gapMins" min="0" max="60" style="width:62px"></div>
+        <div class="ctl-row"><label for="warmupSecs">Warm-up before Round 1 (secs)</label><input type="number" id="warmupSecs" min="0" max="600" style="width:62px"></div>
+        <div class="ctl-row"><label for="warnHorn">Short blast at 1 min left</label><input type="checkbox" class="switch" id="warnHorn"></div>
+        <div class="grp-title">Foghorn</div>
+        <div class="ctl-row"><label for="fogVol">Foghorn volume</label><input type="range" id="fogVol" min="0" max="1" step="0.05"></div>
+        <div class="grp-title">Voice</div>
+        <div class="ctl-row"><label for="voice">Announcer voice</label><select id="voice" style="max-width:150px"></select></div>
+        <div class="ctl-row"><label for="rate">Speed</label><input type="range" id="rate" min="0.7" max="1.2" step="0.05"></div>
+        <div class="ctl-row"><label for="pitch">Pitch (lower = drawl)</label><input type="range" id="pitch" min="0.6" max="1.2" step="0.05"></div>
+        <div class="ctl-row"><label for="vol">Voice volume</label><input type="range" id="vol" min="0" max="1" step="0.05"></div>
+      </div></div>
+      <div class="card" style="margin-top:1rem"><div class="card-h"><span class="eyebrow">Telegraph log</span><button id="clearLog" style="margin-left:auto;font-size:.72rem;padding:.3rem .55rem">Clear</button></div><div class="log" id="log"></div></div>
+    </div>
+  </div>
+  <details class="editor"><summary>Schedule — paste from Tournify &amp; edit</summary><div class="editor-b">
+    <p class="hint">Match line: <code>time, field, team A, team B, umpire</code> — lines sharing a time become one round. Longer match? add a 6th value (mins), e.g. the finale <code>16:15, Grass 2, 1st A, 1st B, Committee, 50</code>. Event line: start with <code>!</code> — <code>12:15, ! Beer Race, 50</code>. Order top to bottom is play order.</p>
+    <textarea id="paste" spellcheck="false"></textarea>
+    <div class="editor-actions">
+      <button class="btn-primary" id="loadSched">Load this schedule</button>
+      <button id="exportJson">Export (JSON)</button>
+      <button id="resetDay">Reset the day</button>
+      <button id="restoreDefault">Restore 2026 schedule</button>
+    </div>
+    <p class="hint" id="schedStatus"></p>
+  </div></details>
+  <footer>Babs · Hunt · Clare · Becca · Kate &nbsp;|&nbsp; mixedfestival@berkohockeyclub.com &nbsp;|&nbsp; Runs offline · keep the laptop awake &amp; plugged into the PA</footer>
+</div>
+<script>
+const DEFAULT_AGENDA=[{"type": "round", "label": "Round 1", "time": "09:45", "mins": 20, "finale": false, "fixtures": [{"field": "Grass 1 (Hilly)", "a": "Norfolk n Chance", "b": "The Mighty Cheshunt Schlong Donkeys", "umpire": "Berko Mixed"}, {"field": "Grass 2 ( Flat)", "a": "Bronco Bandits", "b": "Sons of Pitches", "umpire": "Bronco Bandits"}, {"field": "Astro 1 (Gate)", "a": "The beery buffalo's", "b": "Geophysical", "umpire": "Chicks 'n' Dicks"}, {"field": "Astro 2 (Woods)", "a": "The sexy sheriffs", "b": "The Stick 'em Up Crew", "umpire": "Geophysical"}]}, {"type": "round", "label": "Round 2", "time": "10:15", "mins": 20, "finale": false, "fixtures": [{"field": "Grass 1 (Hilly)", "a": "Pink Punters", "b": "Percy Pigs", "umpire": "Mighty Mavericks"}, {"field": "Grass 2 ( Flat)", "a": "Tromboning on the Prairie", "b": "Mighty Mavericks", "umpire": "Norfolk n Chance"}, {"field": "Astro 1 (Gate)", "a": "Berko Mixed", "b": "The Mighty Cheshunt Schlong Donkeys", "umpire": "Percy Pigs"}, {"field": "Astro 2 (Woods)", "a": "Norfolk n Chance", "b": "Geophysical", "umpire": "Pink Punters"}]}, {"type": "round", "label": "Round 3", "time": "10:45", "mins": 20, "finale": false, "fixtures": [{"field": "Grass 1 (Hilly)", "a": "Bronco Bandits", "b": "The beery buffalo's", "umpire": "Sons of Pitches"}, {"field": "Grass 2 ( Flat)", "a": "Chicks 'n' Dicks", "b": "The Stick 'em Up Crew", "umpire": "The beery buffalo's"}, {"field": "Astro 1 (Gate)", "a": "The sexy sheriffs", "b": "Mighty Mavericks", "umpire": "The Mighty Cheshunt Schlong Donkeys"}, {"field": "Astro 2 (Woods)", "a": "Pink Punters", "b": "Tromboning on the Prairie", "umpire": "The sexy sheriffs"}]}, {"type": "round", "label": "Round 4", "time": "11:15", "mins": 20, "finale": false, "fixtures": [{"field": "Grass 1 (Hilly)", "a": "Berko Mixed", "b": "Sons of Pitches", "umpire": "The Stick 'em Up Crew"}, {"field": "Grass 2 ( Flat)", "a": "The Mighty Cheshunt Schlong Donkeys", "b": "Geophysical", "umpire": "Tromboning on the Prairie"}, {"field": "Astro 1 (Gate)", "a": "Norfolk n Chance", "b": "Bronco Bandits", "umpire": "Berko Mixed"}, {"field": "Astro 2 (Woods)", "a": "Chicks 'n' Dicks", "b": "Percy Pigs", "umpire": "Bronco Bandits"}]}, {"type": "round", "label": "Round 5", "time": "11:45", "mins": 20, "finale": false, "fixtures": [{"field": "Grass 1 (Hilly)", "a": "The Stick 'em Up Crew", "b": "Mighty Mavericks", "umpire": "Chicks 'n' Dicks"}, {"field": "Grass 2 ( Flat)", "a": "The sexy sheriffs", "b": "Pink Punters", "umpire": "Geophysical"}, {"field": "Astro 1 (Gate)", "a": "Berko Mixed", "b": "Geophysical", "umpire": "Mighty Mavericks"}, {"field": "Astro 2 (Woods)", "a": "Sons of Pitches", "b": "The beery buffalo's", "umpire": "Norfolk n Chance"}]}, {"type": "event", "kind": "beer", "label": "Beer Race", "time": "12:15", "mins": 50}, {"type": "round", "label": "Round 6", "time": "13:05", "mins": 20, "finale": false, "fixtures": [{"field": "Grass 1 (Hilly)", "a": "The Mighty Cheshunt Schlong Donkeys", "b": "Bronco Bandits", "umpire": "Percy Pigs"}, {"field": "Grass 2 ( Flat)", "a": "Chicks 'n' Dicks", "b": "Mighty Mavericks", "umpire": "Pink Punters"}, {"field": "Astro 1 (Gate)", "a": "Percy Pigs", "b": "Tromboning on the Prairie", "umpire": "Sons of Pitches"}, {"field": "Astro 2 (Woods)", "a": "The Stick 'em Up Crew", "b": "Pink Punters", "umpire": "The beery buffalo's"}]}, {"type": "round", "label": "Round 7", "time": "13:35", "mins": 20, "finale": false, "fixtures": [{"field": "Grass 1 (Hilly)", "a": "Berko Mixed", "b": "The beery buffalo's", "umpire": "The Mighty Cheshunt Schlong Donkeys"}, {"field": "Grass 2 ( Flat)", "a": "Geophysical", "b": "Bronco Bandits", "umpire": "The sexy sheriffs"}, {"field": "Astro 1 (Gate)", "a": "Sons of Pitches", "b": "Norfolk n Chance", "umpire": "The Stick 'em Up Crew"}, {"field": "Astro 2 (Woods)", "a": "Chicks 'n' Dicks", "b": "Tromboning on the Prairie", "umpire": "Tromboning on the Prairie"}]}, {"type": "round", "label": "Round 8", "time": "14:05", "mins": 20, "finale": false, "fixtures": [{"field": "Grass 1 (Hilly)", "a": "Mighty Mavericks", "b": "Pink Punters", "umpire": "Berko Mixed"}, {"field": "Grass 2 ( Flat)", "a": "Percy Pigs", "b": "The sexy sheriffs", "umpire": "Bronco Bandits"}, {"field": "Astro 1 (Gate)", "a": "Berko Mixed", "b": "Bronco Bandits", "umpire": "Chicks 'n' Dicks"}, {"field": "Astro 2 (Woods)", "a": "The beery buffalo's", "b": "Norfolk n Chance", "umpire": "Geophysical"}]}, {"type": "round", "label": "Round 9", "time": "14:35", "mins": 20, "finale": false, "fixtures": [{"field": "Grass 1 (Hilly)", "a": "Sons of Pitches", "b": "The Mighty Cheshunt Schlong Donkeys", "umpire": "Mighty Mavericks"}, {"field": "Grass 2 ( Flat)", "a": "Chicks 'n' Dicks", "b": "Pink Punters", "umpire": "Norfolk n Chance"}, {"field": "Astro 1 (Gate)", "a": "Tromboning on the Prairie", "b": "The sexy sheriffs", "umpire": "Percy Pigs"}, {"field": "Astro 2 (Woods)", "a": "Percy Pigs", "b": "The Stick 'em Up Crew", "umpire": "Pink Punters"}]}, {"type": "round", "label": "Round 10", "time": "15:05", "mins": 20, "finale": false, "fixtures": [{"field": "Grass 1 (Hilly)", "a": "Berko Mixed", "b": "Norfolk n Chance", "umpire": "Sons of Pitches"}, {"field": "Grass 2 ( Flat)", "a": "The beery buffalo's", "b": "The Mighty Cheshunt Schlong Donkeys", "umpire": "The beery buffalo's"}, {"field": "Astro 1 (Gate)", "a": "Geophysical", "b": "Sons of Pitches", "umpire": "The Mighty Cheshunt Schlong Donkeys"}, {"field": "Astro 2 (Woods)", "a": "Chicks 'n' Dicks", "b": "The sexy sheriffs", "umpire": "The sexy sheriffs"}]}, {"type": "round", "label": "Round 11", "time": "15:35", "mins": 20, "finale": false, "fixtures": [{"field": "Grass 1 (Hilly)", "a": "Tromboning on the Prairie", "b": "The Stick 'em Up Crew", "umpire": "The Stick 'em Up Crew"}, {"field": "Grass 2 ( Flat)", "a": "Mighty Mavericks", "b": "Percy Pigs", "umpire": "Tromboning on the Prairie"}]}, {"type": "event", "kind": "break", "label": "Pre-Final Break", "time": "16:05", "mins": 20}, {"type": "round", "label": "Big Finale", "time": "16:15", "mins": 50, "finale": true, "fixtures": [{"field": "Grass 2 ( Flat)", "a": "1st Group A", "b": "1st Group B", "umpire": ""}]}, {"type": "event", "kind": "prizes", "label": "Prizes!", "time": "17:15", "mins": 20}];
+
+const store={get(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+
+const BANK={
+  openers:["Yee-haw, partners! Round {round} is rollin' in.","Gather round, cowpokes — Round {round} saddles up next.","Right then, buckaroos, here's the lowdown for Round {round}.","Howdy folks! Round {round} is coming down the trail.","Listen up around the ranch — Round {round} rides out shortly.","Sticks at the ready! Here's who's where for Round {round}."],
+  fixtureLine:["On {pitch}, it's {a} taking on {b}, with {umpire} keeping the peace.","Over on {pitch}, {a} square off against {b}, umpired by {umpire}.","{pitch} hosts {a} versus {b}. {umpire} has the whistle."],
+  fixtureLineNoUmp:["On {pitch}, it's {a} taking on {b}.","Over on {pitch}, {a} square off against {b}.","{pitch} hosts {a} versus {b}."],
+  umpireCall:["Nominated umpires, grab your whistles and mosey on over to your pitches, please.","Umpires — to your pitches now, partners. We can't ride without you.","Whistle-blowers, take your posts. Each team, remember to provide your umpire."],
+  playOn:["Saddle up — on the horn, you ride! Round {round}, play on!","Sticks down, partners. Round {round} — get goin'!","Here we go, folks. Round {round} is underway. Good luck!"],
+  finalePlayOn:["This is it — the Big Finale! On the horn, you ride. Play on, partners!","All the glory on the line. The Big Finale starts now — play on!"],
+  endMatch:["And that's the foghorn — time, partners! Sticks down.","That's your lot — the horn has sounded. Match over!"],
+  scoresReminder:["Captains — wire your scores into the Tournify app quick as you can, ya hear?","Captains, pop your results into Tournify before the next throw-off, please.","Round's done. Captains, get those scores logged in Tournify."],
+  finals:["This is it, partners — the Big Finale is upon us! Best of luck to both teams still standing tall.","Round 'em up, folks — it's the Big Finale! The cream of the crop ride out for glory."],
+  events:{
+    beer:["Yee-haw! Drop your sticks, partners — it's the Beer Race! Grab a tankard and get yourselves to the start line.","Saddle up to the bar, cowpokes — the Beer Race is on! May the fastest gullet win."],
+    break:["Take five, partners. The Big Finale is comin' up next — grab a drink and find yourself a good spot.","Breather time, cowpokes. Catch your breath, the Big Finale's just around the corner."],
+    prizes:["Round 'em up by the bar, folks — prize-givin' is about to begin. Tip your hats to the champions!","Holster your sticks and head to the bar, partners — time to crown our Mixed Fest champions!"],
+    generic:["Heads up, partners — {label} now.","Listen up around the ranch — it's time for {label}."]
+  }
+};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const fill=(s,d)=>s.replace(/\{(\w+)\}/g,(_,k)=>d[k]!=null?d[k]:"");
+
+let agenda=store.get('mf_agenda')||JSON.parse(JSON.stringify(DEFAULT_AGENDA));
+let settings=Object.assign({matchMins:20,gapMins:10,warmupSecs:60,warnHorn:false,fogVol:0.85,rate:0.95,pitch:0.9,vol:1,voice:''},store.get('mf_settings')||{});
+let onAir=false, wakeLock=null;
+let T={mode:'idle',cur:-1,up:-1,endAt:0,total:0,running:false,pausedLeft:0,token:0,oneShots:new Set(),briefed:new Set()};
+function saveAll(){store.set('mf_agenda',agenda);store.set('mf_settings',settings);}
+function numberAgenda(){let n=0;agenda.forEach(s=>{if(s.type==='round'&&!s.finale){n++;s.num=n;}});}
+numberAgenda();
+
+/* ---- audio: synthesised foghorn ---- */
+let actx=null,fogMaster=null;
+function ensureAudio(){if(actx)return;try{actx=new (window.AudioContext||window.webkitAudioContext)();fogMaster=actx.createGain();fogMaster.gain.value=settings.fogVol;fogMaster.connect(actx.destination);}catch(e){actx=null;}}
+function blast(start,dur){const g=actx.createGain();g.connect(fogMaster);g.gain.setValueAtTime(0.0001,start);g.gain.exponentialRampToValueAtTime(1,start+0.12);g.gain.setValueAtTime(1,start+dur-0.55);g.gain.exponentialRampToValueAtTime(0.0001,start+dur);
+  const lp=actx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=720;lp.Q.value=0.6;lp.connect(g);
+  [[74,'sine',0.95],[148,'sawtooth',0.5],[150.5,'sawtooth',0.42],[222,'sawtooth',0.14]].forEach(([f,ty,a])=>{const o=actx.createOscillator();o.type=ty;o.frequency.value=f;const og=actx.createGain();og.gain.value=a;o.connect(og);og.connect(lp);o.start(start);o.stop(start+dur+0.05);});}
+function foghorn(n,dur,tag){if(!onAir)return;ensureAudio();if(!actx)return;if(actx.state==='suspended')actx.resume();let t=actx.currentTime+0.02;for(let i=0;i<n;i++){blast(t,dur||2.2);t+=(dur||2.2)+0.45;}log('Foghorn — '+(tag||(n>1?'end of match':'match start')),'horn');}
+
+/* ---- speech ---- */
+const synth=window.speechSynthesis;let voices=[];
+function scoreVoice(v){let s=0;const n=v.name.toLowerCase();if(/en[-_]gb/i.test(v.lang))s+=50;else if(/^en/i.test(v.lang))s+=20;if(/natural|neural|premium|enhanced|online/.test(n))s+=40;if(/google/.test(n))s+=15;['daniel','serena','sonia','libby','ryan','arthur','kate','stephanie','oliver','george','hazel','aria'].forEach(k=>{if(n.includes(k))s+=10;});if(/microsoft/.test(n))s+=4;return s;}
+function loadVoices(){voices=synth?synth.getVoices():[];const ranked=[...voices].sort((a,b)=>scoreVoice(b)-scoreVoice(a));const sel=document.getElementById('voice');sel.innerHTML='';ranked.forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=`${v.name} (${v.lang})`;sel.appendChild(o);});if(!settings.voice&&ranked[0])settings.voice=ranked[0].name;if(settings.voice)sel.value=settings.voice;}
+if(synth)synth.onvoiceschanged=loadVoices;
+function speak(text,tag){log(text,tag);if(!synth||!onAir)return;(text.match(/[^.!?]+[.!?]*/g)||[text]).forEach(p=>{const u=new SpeechSynthesisUtterance(p.trim());const v=voices.find(x=>x.name===settings.voice);if(v)u.voice=v;u.rate=settings.rate;u.volume=settings.vol;u.pitch=settings.pitch;synth.speak(u);});}
+
+/* ---- announcement builders ---- */
+function speakField(f){return (f.field||'').replace(/\s*\(\s*([^)]+?)\s*\)/,', the $1 pitch').trim();}
+function roundNumOf(s){return s.num||1;}
+function buildRoundAnnouncement(s){let out=s.finale?pick(BANK.finals):fill(pick(BANK.openers),{round:roundNumOf(s)});
+  (s.fixtures||[]).forEach(f=>{const d={pitch:speakField(f),a:f.a,b:f.b,umpire:(f.umpire||'').trim()};out+=" "+((d.umpire)?fill(pick(BANK.fixtureLine),d):fill(pick(BANK.fixtureLineNoUmp),d));});
+  out+=" "+pick(BANK.umpireCall);return out;}
+const buildPlayOn=s=>s.finale?pick(BANK.finalePlayOn):fill(pick(BANK.playOn),{round:roundNumOf(s)});
+function buildEventShout(s){const bank=(BANK.events[s.kind]||BANK.events.generic);return fill(pick(bank),{label:s.label,mins:s.mins});}
+function durSec(s){return Math.max(1,(s.mins||settings.matchMins))*60;}
+
+/* ---- engine ---- */
+function isRound(i){return agenda[i]&&agenda[i].type==='round';}
+function setEnd(secs){T.total=secs;T.endAt=Date.now()+secs*1000;T.running=true;T.token++;T.oneShots.clear();}
+function enterBreak(up,secs){T.mode='break';T.up=up;T.cur=-1;setEnd(secs);
+  const s=agenda[up];if(s&&s.type==='round'){speak(buildRoundAnnouncement(s),'coming up');T.briefed.add(up);}
+  setControls();setPhaseUI();}
+function enterSegment(i){T.mode='segment';T.cur=i;T.up=-1;const s=agenda[i];setEnd(durSec(s));
+  if(s.type==='round'){foghorn(1,2.4,s.finale?'Big Finale start':'match start');if(!T.briefed.has(i))speak(buildRoundAnnouncement(s),'round');speak(buildPlayOn(s),'play on');}
+  else{foghorn(1,1.3,s.label);speak(buildEventShout(s),s.kind||'event');}
+  setControls();setPhaseUI();}
+function startDay(){if(!agenda.length){log('No schedule loaded.','—');return;}if(!onAir)goOnAir();enterBreak(0,Math.max(1,settings.warmupSecs));}
+function segmentEnded(i){const s=agenda[i];
+  if(s.type==='round'){foghorn(2,2.0,'end of match');speak(pick(BANK.endMatch),'time');setTimeout(()=>speak(pick(BANK.scoresReminder),'scores'),500);}
+  const j=i+1;
+  if(agenda[j]){
+    if(isRound(i)&&isRound(j)){enterBreak(j,settings.gapMins*60);}
+    else{enterSegment(j);}
+  } else {T.mode='idle';T.running=false;setControls();setPhaseUI();log('Schedule complete — that is a wrap, partners!','system');}
+}
+function tickTimer(){if(T.mode==='idle'||!T.running)return;const left=Math.max(0,Math.round((T.endAt-Date.now())/1000));
+  if(T.mode==='break'&&isRound(T.up)&&left===60&&!T.oneShots.has(T.token+':u')){T.oneShots.add(T.token+':u');speak(pick(BANK.umpireCall),'umpires');}
+  if(T.mode==='segment'&&isRound(T.cur)&&settings.warnHorn&&left===60&&!T.oneShots.has(T.token+':w')){T.oneShots.add(T.token+':w');foghorn(1,0.8,'one minute left');}
+  if(left<=0){if(T.mode==='segment')segmentEnded(T.cur);else enterSegment(T.up);}}
+
+/* ---- UI ---- */
+function fmt(s){const m=Math.floor(s/60),x=s%60;return String(m).padStart(2,'0')+':'+String(x).padStart(2,'0');}
+function tidyField(f){return (f||'').replace(/\(\s+/,'(');}
+function segCardHTML(s){if(!s)return '<div class="empty">—</div>';
+  if(s.type==='event')return `<div class="round-time">${esc(s.time||'')} · ${esc(s.mins)} min</div><div class="eventbox">${esc(s.label)}</div>`;
+  const rows=(s.fixtures||[]).map(f=>`<tr><td class="pitch">${esc(tidyField(f.field))}</td><td>${esc(f.a)} <span class="vs">vs</span> ${esc(f.b)}</td><td class="ump">${(f.umpire||'').trim()?esc(f.umpire.trim()):'<em>own umpire</em>'}</td></tr>`).join('');
+  return `<div class="round-time">${esc(s.time||'')}${s.mins&&s.mins!==settings.matchMins?' · '+s.mins+' min':''}</div><div class="round-label">${esc(s.label||'Round')}</div><table class="fixtures"><thead><tr><th>Pitch</th><th>Match</th><th>Umpire</th></tr></thead><tbody>${rows}</tbody></table>`;}
+function setPhaseUI(){const hero=document.getElementById('hero');hero.classList.remove('match','break','event');
+  const bt=document.getElementById('bigtime'),ph=document.getElementById('phase'),sub=document.getElementById('phaseSub'),prog=document.getElementById('prog');
+  const left=T.running?Math.max(0,Math.round((T.endAt-Date.now())/1000)):T.pausedLeft;
+  if(T.mode==='idle'){bt.textContent='--:--';ph.textContent='Ready';prog.style.width='0';return;}
+  bt.textContent=fmt(left);prog.style.width=T.total?(100*(1-left/T.total))+'%':'0';
+  if(T.mode==='segment'){const s=agenda[T.cur];
+    if(s.type==='event'){hero.classList.add('event');ph.textContent=s.label+(T.running?'':' (paused)');sub.innerHTML=`${esc(s.mins)} minutes`;}
+    else{hero.classList.add('match');ph.textContent=(s.finale?'Big Finale':'Match')+(T.running?'':' (paused)');sub.innerHTML=`<b>${esc(s.label)}</b> — ${esc((s.fixtures||[]).map(f=>tidyField(f.field)).join(' · '))}`;}
+  } else {hero.classList.add('break');const s=agenda[T.up];ph.textContent='Break'+(T.running?'':' (paused)');sub.innerHTML=s?`Next up: <b>${esc(s.label)}</b>`:'Day complete';}}
+function render(){let nowS=null,nextS=null;
+  if(T.mode==='segment'){nowS=agenda[T.cur];nextS=agenda[T.cur+1];}
+  else if(T.mode==='break'){nowS=null;nextS=agenda[T.up];}
+  document.getElementById('nowBody').innerHTML=nowS?segCardHTML(nowS):'<div class="empty">In the break.</div>';
+  document.getElementById('nextBody').innerHTML=nextS?segCardHTML(nextS):'<div class="empty">—</div>';
+  document.getElementById('nowPill').textContent=nowS?nowS.label:(T.mode==='break'?'Break':'—');
+  document.getElementById('nextPill').textContent=nextS?nextS.label:'—';}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function log(msg,tag){const box=document.getElementById('log'),d=new Date();const t=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;const el=document.createElement('div');el.className='line';el.innerHTML=`<span class="t">${t}</span><span class="msg">${esc(msg)}</span><span class="tag">${esc(tag||'')}</span>`;box.prepend(el);}
+function setControls(){const run=T.mode!=='idle';document.getElementById('startBtn').disabled=run;document.getElementById('pauseBtn').disabled=!run;document.getElementById('throwBtn').disabled=!(T.mode==='break');document.getElementById('endBtn').disabled=!(T.mode==='segment');document.getElementById('plus30').disabled=!run;document.getElementById('minus30').disabled=!run;document.getElementById('pauseBtn').textContent=T.running?'⏸ Pause':'▶ Resume';}
+
+/* ---- on / off air ---- */
+async function goOnAir(){if(onAir)return;ensureAudio();if(actx&&actx.state==='suspended')actx.resume();onAir=true;document.body.classList.add('live');document.getElementById('lampTxt').textContent='On air';document.getElementById('goBtn').textContent='○ Stand down';document.getElementById('speechWarn').style.display='none';
+  if(synth){const u=new SpeechSynthesisUtterance('Dispatch desk is on air.');const v=voices.find(x=>x.name===settings.voice);if(v)u.voice=v;u.rate=settings.rate;u.volume=settings.vol;u.pitch=settings.pitch;synth.speak(u);}log('On air.','system');
+  try{wakeLock=await navigator.wakeLock.request('screen');}catch(e){}}
+function standDown(){if(!onAir)return;onAir=false;document.body.classList.remove('live');document.getElementById('lampTxt').textContent='Off air';document.getElementById('goBtn').textContent='● Go on air';
+  if(synth)synth.cancel();if(wakeLock){try{wakeLock.release();}catch(e){}wakeLock=null;}
+  if(T.running){T.pausedLeft=Math.max(0,Math.round((T.endAt-Date.now())/1000));T.running=false;setControls();setPhaseUI();}
+  log('Off air — standing by.','system');}
+document.addEventListener('visibilitychange',async()=>{if(onAir&&document.visibilityState==='visible'){try{wakeLock=await navigator.wakeLock.request('screen');}catch(e){}}});
+
+/* ---- wiring ---- */
+document.getElementById('goBtn').onclick=()=>{onAir?standDown():goOnAir();};
+document.getElementById('startBtn').onclick=startDay;
+document.getElementById('pauseBtn').onclick=()=>{if(T.mode==='idle')return;if(T.running){T.pausedLeft=Math.max(0,Math.round((T.endAt-Date.now())/1000));T.running=false;if(synth)synth.cancel();log('Paused.','system');}else{T.endAt=Date.now()+T.pausedLeft*1000;T.running=true;log('Resumed.','system');}setControls();setPhaseUI();};
+document.getElementById('throwBtn').onclick=()=>{if(T.mode==='break'){if(synth)synth.cancel();enterSegment(T.up);}};
+document.getElementById('endBtn').onclick=()=>{if(T.mode==='segment'){if(synth)synth.cancel();segmentEnded(T.cur);}};
+document.getElementById('plus30').onclick=()=>{if(T.running)T.endAt+=30000;else T.pausedLeft+=30;setPhaseUI();};
+document.getElementById('minus30').onclick=()=>{if(T.running)T.endAt-=30000;else T.pausedLeft=Math.max(0,T.pausedLeft-30);setPhaseUI();};
+document.getElementById('hornBtn').onclick=()=>{if(!onAir){document.getElementById('speechWarn').style.display='block';return;}foghorn(1,2.2,'test');};
+document.getElementById('announceRound').onclick=()=>{let s=null;if(T.mode==='break')s=agenda[T.up];else if(T.mode==='segment')s=agenda[T.cur];else s=agenda.find(x=>x.type==='round');if(!s||s.type!=='round')return;if(synth)synth.cancel();speak(buildRoundAnnouncement(s),'round (manual)');};
+document.getElementById('scores').onclick=()=>{if(synth)synth.cancel();speak(pick(BANK.scoresReminder),'scores (manual)');};
+document.getElementById('finalsBtn').onclick=()=>{if(synth)synth.cancel();speak(pick(BANK.finals),'finals');};
+document.getElementById('prizesBtn').onclick=()=>{if(synth)synth.cancel();speak(pick(BANK.events.prizes),'prizes');};
+document.getElementById('testVoice').onclick=()=>{if(!onAir){document.getElementById('speechWarn').style.display='block';return;}if(synth)synth.cancel();speak('Howdy partners — this is your Mixed Fest dispatch desk, loud and clear. Yee-haw!','test');};
+document.getElementById('stopBtn').onclick=()=>{if(synth)synth.cancel();log('Speech stopped.','system');};
+document.getElementById('clearLog').onclick=()=>{document.getElementById('log').innerHTML='';};
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){e.preventDefault();document.getElementById('pauseBtn').click();}});
+
+/* ---- settings binding ---- */
+function num(id,k){const el=document.getElementById(id);el.value=settings[k];el.onchange=()=>{settings[k]=+el.value;saveAll();};}
+function chk(id,k){const el=document.getElementById(id);el.checked=settings[k];el.onchange=()=>{settings[k]=el.checked;saveAll();};}
+function rng(id,k,extra){const el=document.getElementById(id);el.value=settings[k];el.oninput=()=>{settings[k]=+el.value;saveAll();if(extra)extra();};}
+num('matchMins','matchMins');num('gapMins','gapMins');num('warmupSecs','warmupSecs');chk('warnHorn','warnHorn');
+rng('fogVol','fogVol',()=>{if(fogMaster)fogMaster.gain.value=settings.fogVol;});rng('rate','rate');rng('pitch','pitch');rng('vol','vol');
+document.getElementById('voice').onchange=e=>{settings.voice=e.target.value;saveAll();};
+
+/* ---- schedule editor ---- */
+function agendaToText(){return agenda.map(s=>{
+  if(s.type==='event')return `${s.time||''}, ! ${s.label}, ${s.mins}`;
+  return (s.fixtures||[]).map(f=>{const base=[s.time||'',tidyField(f.field),f.a,f.b,(f.umpire||'').trim()];if(s.mins&&s.mins!==settings.matchMins)base.push(s.mins);return base.join(', ');}).join('\n');
+}).join('\n');}
+function kindOf(label){const l=label.toLowerCase();if(l.includes('beer'))return 'beer';if(l.includes('prize'))return 'prizes';if(l.includes('break'))return 'break';return 'generic';}
+function parseAgenda(txt){const out=[];
+  txt.split('\n').map(l=>l.trim()).filter(Boolean).forEach(l=>{
+    const p=l.split(',').map(s=>s.trim());
+    if(p[1]&&p[1].startsWith('!')){const label=p[1].slice(1).trim();const mins=parseInt(p[2],10)||10;out.push({type:'event',kind:kindOf(label),label,time:p[0],mins});return;}
+    if(p.length<4)return;
+    const [time,field,a,b,ump,mins]=p;const m=parseInt(mins,10);
+    const last=out[out.length-1];
+    if(last&&last.type==='round'&&last.time===time){last.fixtures.push({field,a,b,umpire:ump||''});if(!isNaN(m))last.mins=Math.max(last.mins,m);}
+    else{const finale=/final/i.test(time)||(!isNaN(m)&&m>settings.matchMins);out.push({type:'round',label:finale?'Big Finale':'Round',time,finale,mins:!isNaN(m)?m:(finale?50:settings.matchMins),fixtures:[{field,a,b,umpire:ump||''}]});}
+  });
+  let rn=0;out.forEach(s=>{if(s.type==='round'&&!s.finale){rn++;s.label='Round '+rn;}});
+  return out;}
+document.getElementById('paste').value=agendaToText();
+document.getElementById('loadSched').onclick=()=>{const parsed=parseAgenda(document.getElementById('paste').value);if(!parsed.length){document.getElementById('schedStatus').textContent="Couldn't read anything — check the format.";return;}agenda=parsed;numberAgenda();resetEngine();saveAll();const rc=agenda.filter(s=>s.type==='round').length,ec=agenda.filter(s=>s.type==='event').length;document.getElementById('schedStatus').textContent=`Loaded ${rc} rounds and ${ec} events.`;};
+document.getElementById('exportJson').onclick=()=>{const b=new Blob([JSON.stringify(agenda,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mixed_fest_agenda.json';a.click();};
+function resetEngine(){T={mode:'idle',cur:-1,up:-1,endAt:0,total:0,running:false,pausedLeft:0,token:0,oneShots:new Set(),briefed:new Set()};if(synth)synth.cancel();setControls();setPhaseUI();render();}
+document.getElementById('resetDay').onclick=()=>{resetEngine();document.getElementById('schedStatus').textContent='Day reset — back to the start.';};
+document.getElementById('restoreDefault').onclick=()=>{agenda=JSON.parse(JSON.stringify(DEFAULT_AGENDA));numberAgenda();saveAll();document.getElementById('paste').value=agendaToText();resetEngine();document.getElementById('schedStatus').textContent='Restored the built-in 2026 schedule.';};
+
+/* ---- boot ---- */
+loadVoices();setTimeout(loadVoices,400);
+setControls();render();setPhaseUI();
+setInterval(()=>{const d=new Date();document.getElementById('wallclock').textContent=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;tickTimer();setPhaseUI();render();},1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+*.swp
+.vscode/
+.idea/
+
+# Keep private/personal data out of a public repo
+/private/
+*registration*
+*responses*
+*.local
