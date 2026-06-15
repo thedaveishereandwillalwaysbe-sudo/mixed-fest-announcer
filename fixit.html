@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mixed Fest 2026 — On-the-Day Fix It</title>
+<style>
+  :root{--ink:#2c2c2a;--muted:#5f5e5a;--faint:#888780;--line:#e3e1d8;--cream:#faf8f1;
+    --navy:#140d5e;--gold:#bb8a2e;--bluebg:#e6f1fb;--bluedk:#0c447c;
+    --ambbg:#faeeda;--ambdk:#854f0b;--redbg:#fcebeb;--reddk:#791f1f;--grnbg:#eaf3de;--grndk:#27500a;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);background:#f4f2ea;line-height:1.55;font-size:16px}
+  .page{max-width:760px;margin:0 auto;padding:0 16px 48px}
+  a{color:var(--bluedk)}
+  header{background:var(--navy);color:#fff;padding:22px 18px;border-radius:0 0 14px 14px;margin:0 -16px 18px}
+  header h1{margin:0 0 4px;font-size:22px;font-weight:600}
+  header p{margin:0;font-size:13px;color:#cfcbe8}
+  .intro{background:var(--bluebg);border-radius:12px;padding:14px 16px;margin-bottom:14px;font-size:14px;color:var(--bluedk)}
+  .intro b{font-weight:600}
+  .links{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:18px}
+  .links h3{margin:0 0 8px;font-size:14px;color:var(--navy);font-weight:600}
+  .links .row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+  .links a.big{display:inline-block;background:var(--navy);color:#fff;text-decoration:none;padding:8px 14px;border-radius:8px;font-size:14px;font-weight:600}
+  .links .fill{background:var(--ambbg);color:var(--ambdk);border-radius:8px;padding:8px 12px;font-size:13px;margin-top:8px}
+  .links .fill b{font-weight:600}
+  details.teams{margin-top:10px}
+  details.teams summary{font-size:13px;color:var(--muted);cursor:pointer}
+  .teamgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:4px 14px;margin-top:8px}
+  .teamgrid a{font-size:13px;text-decoration:none}
+  .cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+  .cat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;text-align:left;cursor:pointer;
+    display:flex;flex-direction:column;gap:3px;font:inherit;transition:border-color .15s}
+  .cat:hover{border-color:var(--gold)}
+  .cat.on{border:2px solid var(--navy);padding:13px}
+  .cat .t{font-size:15px;font-weight:600;color:var(--ink)}
+  .cat .s{font-size:12px;color:var(--muted)}
+  .prob{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:9px;overflow:hidden}
+  .q{padding:14px 16px;cursor:pointer;font-weight:600;font-size:15px;display:flex;align-items:center;gap:10px}
+  .q .chev{margin-left:auto;color:var(--faint);transition:transform .2s;font-size:13px}
+  .prob.open .chev{transform:rotate(180deg)}
+  .body{display:none;padding:0 16px 14px}
+  .prob.open .body{display:block}
+  .step{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--line);align-items:flex-start}
+  .step:first-child{border-top:none}
+  .lbl{flex:0 0 auto;font-size:12px;font-weight:600;padding:2px 9px;border-radius:7px;white-space:nowrap;margin-top:1px}
+  .do{background:var(--bluebg);color:var(--bluedk)}
+  .check{background:var(--ambbg);color:var(--ambdk)}
+  .last{background:var(--redbg);color:var(--reddk)}
+  .txt{font-size:14px}
+  .txt b{font-weight:600}
+  .txt a{font-weight:600}
+  .panic{background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:22px}
+  .panic h3{margin:0 0 10px;font-size:16px;color:var(--navy)}
+  .panic ol{margin:0;padding-left:20px}
+  .panic li{font-size:14px;margin-bottom:7px}
+  .panic li b{font-weight:600}
+  footer{margin-top:22px;font-size:12px;color:var(--faint);text-align:center;line-height:1.6}
+  @media print{body{background:#fff}.cats,.cat{display:none}.body{display:block!important}.chev{display:none}
+    details.teams{display:block}.teamgrid{display:grid!important}
+    .prob,.panic,.links{break-inside:avoid;border:1px solid #ccc}
+    header{background:#140d5e!important}
+    header,.do,.check,.last,.intro,.panic,.links a.big{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <h1>On-the-Day Fix It Guide</h1>
+  <p>BHHHC Mixed Festival &middot; The Cow's Roast &middot; 19&ndash;21 June 2026</p>
+</header>
+<div class="intro">
+  <b>Three things run the day &amp; they don't talk to each other.</b> The <b>Announcer</b> is just a clock + loudspeaker on the laptop (works offline). <b>Tournify</b> is the live results website (needs internet, scores typed in by hand). The <b>Handout</b> is the team info page. Find which one's broken, tap it below.
+</div>
+<div class="links">
+  <h3>The links you'll need</h3>
+  <div class="row">
+    <a class="big" href="https://tournifyapp.com/live/mixedfest26/present" target="_blank" rel="noopener">Open Tournify live page</a>
+    <a class="big" href="https://www.mrandmrsfitz.com/" target="_blank" rel="noopener" style="background:#854f0b">Mr &amp; Mrs Fitz</a>
+    <a class="big" href="mailto:mixedfestival@berkohockeyclub.com" style="background:#27500a">Email the committee</a>
+  </div>
+  <details class="teams">
+    <summary>Per-team Tournify links (tap to expand)</summary>
+    <div class="teamgrid">
+      <a href="https://tournifyapp.com/live/mixedfest26/team/jwdvExT9z3t9Ns8a4QIQ/zb1mxsET3d3ltejZtma1" target="_blank" rel="noopener">Berko Mixed</a>
+      <a href="https://tournifyapp.com/live/mixedfest26/team/VJ6RJzawEViwJylvdkiS/L0SLL7vIJNQuPn4p4Cqb" target="_blank" rel="noopener">Bronco Bandits</a>
+      <a href="https://tournifyapp.com/live/mixedfest26/team/Jyysluf1tRcrQnkZUwwF/5jI2A9CFWDjBz5aFo50z" target="_blank" rel="noopener">Chicks &lsquo;n&rsquo; Dicks</a>
+      <a href="https://tournifyapp.com/live/mixedfest26/team/4mWjAdxM0FIPNIFBrdRI/6qic1ZegkJwid2W6YWDM" target="_blank" rel="noopener">Geophysical</a>
+      <a href="https://tournifyapp.com/live/mixedfest26/team/3fVuNpRmIrRanQf3FQ1J/IUGM93n86sFxSQxhM0Wu" target="_blank" rel="noopener">Mighty Mavericks</a>
+      <a href="https://tournifyapp.com/live/mixedfest26/team/GLkoeWtxQfBgqdGwWIdJ/GPbyhrpoK9iXbcYXffS7" target="_blank" rel="noopener">Norfolk n Chance</a>
+      <a href="https://tournifyapp.com/live/mixedfest26/team/no6Ds2bo53fLZr9z1kdE/bWDI92cTQiv0lKpOLAAW" target="_blank" rel="noopener">Percy Pigs</a>
+      <a href="https://tournifyapp.com/live/mixedfest26/team/GpBOGeht9YjUTDT0OhW0/leGgrjA6PMPiYtGhgCmK" target="_blank" rel="noopener">Pink Punters</a>
+      <a href="https://tournifyapp.com/live/mixedfest26/team/Oa5QXTPeC32QATQohhM5/ljauGX24V9kz8SzMJ3BK" target="_blank" rel="noopener">Sons of Pitches</a>
+      <a href="https://tournifyapp.com/live/mixedfest26/team/nTlejnSYwUx2iHZM0Udl/EFphfs85H5B44634BCgo" target="_blank" rel="noopener">The Beery Buffalo's</a>
+      <a href="https://tournifyapp.com/live/mixedfest26/team/KrGup5XWI2EQKwu21RqP/ge7z6WcAEBVrvU5hyT9u" target="_blank" rel="noopener">The Mighty Cheshunt Schlong Donkeys</a>
+      <a href="https://tournifyapp.com/live/mixedfest26/team/8XqYdhxVs6swQmMqPY3P/l0Tr0XVb1jGo31nya7vy" target="_blank" rel="noopener">The Sexy Sheriffs</a>
+      <a href="https://tournifyapp.com/live/mixedfest26/team/6cwllBpGYsJgcjwIKI9c/NnjrvWbyzLaJ9zigUO0k" target="_blank" rel="noopener">The Stick 'em Up Crew</a>
+      <a href="https://tournifyapp.com/live/mixedfest26/team/sYnx0LHVvjOyniCCIXgB/Kdc9pVmdJFUUVqPyQIET" target="_blank" rel="noopener">Tromboning on the Prairie</a>
+    </div>
+  </details>
+  <div class="row" style="margin-top:8px">
+    <a class="big" href="https://tinyurl.com/berkomixedfest26handout" target="_blank" rel="noopener" style="background:#0c447c">Open team handout</a>
+    <a class="big" href="mailto:mixedfestival@berkohockeyclub.com" style="background:#5f5e5a">Email the committee</a>
+  </div>
+</div>
+<div class="cats" id="cats"></div>
+<div id="probs"></div>
+<div class="panic">
+  <h3>Completely stuck? The 5 things that always work</h3>
+  <ol>
+    <li><b>Announcer silent?</b> Click <b>&#9679; Go on air</b> once. That unlocks sound.</li>
+    <li><b>Announcer out of sync?</b> <b>&#9208; Pause</b>, then <b>+30s / &minus;30s</b>, or <b>&#9197; End now</b>.</li>
+    <li><b>Scores not in Tournify?</b> They never auto-arrive &mdash; <b>type them in by hand</b> at the <a href="https://tournifyapp.com/live/mixedfest26/present" target="_blank" rel="noopener">live page</a>.</li>
+    <li><b>No internet?</b> Run off the <b>paper schedule + paper results</b>, enter into Tournify later.</li>
+    <li><b>Total meltdown?</b> Whistle + paper schedule + keep matches moving. Phone <b>Hunt or Babs</b>.</li>
+  </ol>
+</div>
+<footer><a href="index.html">&larr; Back to Race Control</a> &middot; <a href="mailto:mixedfestival@berkohockeyclub.com">mixedfestival@berkohockeyclub.com</a> &middot; Babs | Hunt | Clare | Becca | Kate<br>Every fix works offline. Links open only if you have internet. &middot; Tip: print this for a paper backup.</footer>
+</div>
+<script>
+const T='https://tournifyapp.com/live/mixedfest26/present';
+const DATA={
+announcer:{title:'The Announcer',sub:'Laptop clock + voice',probs:[
+ {q:'Out of sync with the real matches',steps:[
+  ['do','Look at the big timer vs the pitches. Is it <b>ahead</b> (saying play-on early) or <b>behind</b> (teams already playing)?'],
+  ['check','Just a few minutes off? You only need to nudge the clock.'],
+  ['do','Small drift: tap <b>+30s</b> / <b>&minus;30s</b> until the clock matches the pitches.'],
+  ['do','Badly out: tap <b>&#9208; Pause</b>, sort the pitches, then <b>&#9197; End now</b> to jump to the next round, or <b>&#128226; Throw off now</b> if you are in a break.'],
+  ['last','Still wrong? <b>Reset the day</b> (schedule editor at the bottom) and restart from the round you are actually on. You lose nothing &mdash; it is only a clock.']]},
+ {q:'No sound at all \u2014 no voice, no whistle',steps:[
+  ['do','Look for a yellow warning box about sound being locked.'],
+  ['do','Click <b>&#9679; Go on air</b> ONCE. Browsers block sound until you click &mdash; this unlocks it.'],
+  ['check','Tap <b>Test voice</b> and <b>Test whistle</b>. Hear them now?'],
+  ['do','Check the laptop volume and the PA/speaker knob are up and not muted.'],
+  ['do','Check the speaker cable / Bluetooth is connected to the laptop, not a phone.']]},
+ {q:'Voice works but whistle doesn\u2019t (or vice versa)',steps:[
+  ['check','On the right there are two sliders: <b>Voice volume</b> and <b>Signal volume</b>. One may be at zero.'],
+  ['do','Drag both sliders up.'],
+  ['check','Test with <b>Test whistle</b> / <b>&#128227; Test foghorn</b> / <b>Test voice</b>.']]},
+ {q:'Wrong start signal or wrong whistle sound',steps:[
+  ['do','In <b>Settings &rarr; Match signals</b>, set <b>Match signal</b> to Whistle or Foghorn.'],
+  ['do','For the whistle sound, change <b>Whistle style</b> (Classic pea / Sharp / Electronic).'],
+  ['check','Tap <b>Test whistle</b> before the next round.']]},
+ {q:'Voice sounds robotic / wrong accent / too fast',steps:[
+  ['do','In <b>Settings &rarr; Voice</b>, pick a different <b>Announcer voice</b>.'],
+  ['do','Adjust <b>Speed</b>, <b>Pitch</b> (lower = drawl) and <b>Voice volume</b>.'],
+  ['check','Tap <b>Test voice</b> after each change. Pick the best voice this laptop has.']]},
+ {q:'Announced the wrong round / want it said again',steps:[
+  ['do','Tap <b>&#128227; Re-announce round</b> &mdash; re-reads the current or upcoming round.'],
+  ['do','For the final, tap <b>Finals shout</b>. For prizes, tap <b>Prize-giving</b>.']]},
+ {q:'A match needs to run longer or shorter',steps:[
+  ['do','During the match, use <b>+30s</b> / <b>&minus;30s</b> to add or remove time live.'],
+  ['check','That is the quickest fix on the day &mdash; no need to touch settings.']]},
+ {q:'The schedule in the announcer is wrong',steps:[
+  ['do','Scroll down, open <b>Schedule &mdash; paste from Tournify &amp; edit</b>.'],
+  ['do','Edit the lines. Format: <b>time, field, team A, team B, umpire</b>. Same time = one round. Longer match? add a 6th number for minutes.'],
+  ['do','Tap <b>Load this schedule</b> &mdash; it confirms how many rounds it read.'],
+  ['last','To start fresh, tap <b>Restore 2026 schedule</b> for the built-in default.']]},
+ {q:'Laptop closed / browser refreshed / it crashed',steps:[
+  ['do','Re-open the <b>mixed_fest_announcer.html</b> file (double-click &mdash; works offline).'],
+  ['check','Your settings and schedule are remembered automatically.'],
+  ['do','Click <b>&#9679; Go on air</b> to unlock sound, then use <b>Throw off now</b> / <b>+30s</b> / <b>&minus;30s</b> to line the clock back up.']]},
+ {q:'Clock runs but nobody\u2019s playing (rain / injury)',steps:[
+  ['do','Tap <b>&#9208; Pause</b>. The clock freezes; the button becomes <b>&#9654; Resume</b>.'],
+  ['do','When ready, tap <b>&#9654; Resume</b>.']]}
+]},
+tournify:{title:'Scores & Tournify',sub:'Live results (needs internet)',probs:[
+ {q:'Scores from teams aren\u2019t showing in Tournify',steps:[
+  ['check','The truth: scores do NOT flow in by themselves, and the announcer does NOT send them. <b>A human types every score in by hand.</b> Nothing is broken.'],
+  ['do','Open the <a href="'+T+'" target="_blank" rel="noopener">Tournify live page</a> on the device logged into the organiser account.'],
+  ['do','Find the finished match, enter the score, save.'],
+  ['check','Standings update on the live page within a few seconds.'],
+  ['last','The <b>Scores &rarr; Tournify</b> button on the announcer only reads out a reminder for captains. It does NOT upload anything.']]},
+ {q:'Tournify won\u2019t load at all',steps:[
+  ['check','Is there internet? Try loading any other website on the same device.'],
+  ['do','No internet: switch to a phone hotspot, or fall back to <b>paper schedule + paper results</b>. Enter scores later &mdash; standings catch up.'],
+  ['do','Internet fine but stuck: refresh, or close the tab and reopen the <a href="'+T+'" target="_blank" rel="noopener">live page</a>.']]},
+ {q:'A score was entered wrong',steps:[
+  ['do','Open the match in <a href="'+T+'" target="_blank" rel="noopener">Tournify</a> (organiser device), edit the score, save.'],
+  ['check','Standings recalculate automatically &mdash; nothing else to touch.']]},
+ {q:'Standings look wrong even though scores are right',steps:[
+  ['check','Is every finished match actually entered? One missing result throws off the table.'],
+  ['do','Go match-by-match through the round and enter any blanks.']]},
+ {q:'The big screen showing Tournify froze',steps:[
+  ['do','On the device, refresh the <a href="'+T+'" target="_blank" rel="noopener">Tournify page</a>.'],
+  ['do','If the display is asleep, wake it and check the HDMI/cable.'],
+  ['last','Worst case, read the standings out via the announcer &mdash; the table is still correct in Tournify.']]},
+ {q:'Two devices clashing while editing Tournify',steps:[
+  ['do','Agree ONE device is the score device for the rest of the day. Everyone else views only.']]}
+]},
+handout:{title:'Team Handout',sub:'Info page / TinyURL',probs:[
+ {q:'A team can\u2019t open the handout link',steps:[
+  ['check','Do they have internet? The link needs data/wifi to load the first time.'],
+  ['do','Once loaded, it caches &mdash; tell them to keep the tab open.'],
+  ['do','Re-send the <a href="https://tinyurl.com/berkomixedfest26handout" target="_blank" rel="noopener">handout link</a> (tinyurl.com/berkomixedfest26handout), or show the QR code on the printed packs.'],
+  ['last','Hand them a paper copy &mdash; pitches, times, food and rules are all on paper too. Their team\u2019s live link is in the Tournify list at the top.']]},
+ {q:'The handout shows wrong info (old times / food)',steps:[
+  ['check','You cannot rebuild it quickly on the day &mdash; do not try.'],
+  ['do','Tell teams the correct detail verbally and via the announcer.'],
+  ['last','Note it down to fix the file after the event. Don\u2019t burn time on the laptop mid-tournament.']]},
+ {q:'The lunch pre-order form isn\u2019t working',steps:[
+  ['check','Pre-orders should be in before the day. The form is a convenience, not a gate.'],
+  ['do','Point them straight at the <a href="https://www.mrandmrsfitz.com/" target="_blank" rel="noopener">Mr &amp; Mrs Fitz</a> van to order verbally.']]}
+]},
+site:{title:'Food, Kit & Site',sub:'Everything else',probs:[
+ {q:'When is food served?',steps:[
+  ['check','Lunch: times printed in the pack. <b>Dinner: 17:30 Saturday.</b> Van closed 15:30&ndash;17:30 Sat while prepping.'],
+  ['do','Friday: Loaded Hotdogs. Saturday: Country &amp; Western Hog. Veggie options both days.']]},
+ {q:'PA / speaker died completely',steps:[
+  ['do','Move the announcer laptop somewhere central, turn its own volume to max.'],
+  ['last','If totally silent, use a manual whistle/airhorn and shout rounds off the paper schedule. The day does not stop for a dead speaker.']]},
+ {q:'Laptop battery dying',steps:[
+  ['do','Plug it in. No power nearby? Dim the screen, close every other app/tab.'],
+  ['do','Have a phone ready to open Tournify so scores keep going in if the laptop sleeps.']]},
+ {q:'Raining / a pitch is unplayable',steps:[
+  ['do','Committee call &mdash; phone Hunt/Babs (numbers at the top). You have grass AND astro, so matches can usually shift to astro.'],
+  ['do','Once decided, pause the announcer, tell teams, resume when pitches are sorted.']]},
+ {q:'A team is short of players / a no-show',steps:[
+  ['do','Committee call: borrow players, play short, or rejig the bracket in Tournify.'],
+  ['do','If the bracket changes, update the announcer schedule so read-outs match.']]}
+]}};
+var active='announcer';
+var cats=document.getElementById('cats'),probs=document.getElementById('probs');
+function renderCats(){cats.innerHTML='';Object.keys(DATA).forEach(function(k){var c=DATA[k];
+ var b=document.createElement('button');b.className='cat'+(k===active?' on':'');
+ b.innerHTML='<span class="t">'+c.title+'</span><span class="s">'+c.sub+'</span>';
+ b.onclick=function(){active=k;renderCats();renderProbs();};cats.appendChild(b);});}
+function renderProbs(){probs.innerHTML='';DATA[active].probs.forEach(function(p){
+ var d=document.createElement('div');d.className='prob';var body='';
+ p.steps.forEach(function(s){var lbl=s[0]==='do'?'Do':s[0]==='check'?'Check':'Last resort';
+  body+='<div class="step"><span class="lbl '+s[0]+'">'+lbl+'</span><span class="txt">'+s[1]+'</span></div>';});
+ d.innerHTML='<div class="q">'+p.q+'<span class="chev">&#9660;</span></div><div class="body">'+body+'</div>';
+ d.querySelector('.q').onclick=function(){d.classList.toggle('open');};probs.appendChild(d);});}
+renderCats();renderProbs();
+</script>
+</body>
+</html>
